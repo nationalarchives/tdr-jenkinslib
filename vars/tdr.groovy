@@ -8,13 +8,24 @@ def runEndToEndTests(int delaySeconds, String stage) {
 
 //It is important for TDR devs to know that the code they want to merge doesn't break TDR. By sending the build status for every commit (all branches) to GitHub we can ensure code that breaks TDR cannot be merged.
 
-//This method should be called at the start of a Jenkins build to let dev know changes are being checked.
-//Should also be called as a 'post' pipeline action in Jenkins for both success and failure of build so that GitHub/devs know that build has completed successfully or failed.
-def reportBuildStatusToGitHub(String repo, String buildStatus, String buildDesc) {
+// Call this when build starts (to let person who made changes know they are being checked) - call within first 'stage' of Jenkins pipeline actions.
+def reportStartOfBuildToGitHub(String repo) {
   withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_ACCESS_TOKEN')]) {
-    String sha = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
-    String url = "https://api.github.com/repos/nationalarchives/${repo}/statuses/${sha}"
-    sh "curl -XPOST '${url}' -H 'Authorization: bearer ${env.GITHUB_ACCESS_TOKEN}' --data '{\"state\":\"${buildStatus}\",\"target_url\":\"${env.BUILD_URL}\",\"description\":\"${buildDesc}\",\"context\":\"TDR Jenkins build status\"}'"
+    sh "curl -XPOST '${GitHubAPIURLHelper(repo)}' -H 'Authorization: bearer ${env.GITHUB_ACCESS_TOKEN}' --data '{\"state\":\"pending\",\"target_url\":\"${env.BUILD_URL}\",\"description\":\"Jenkins build has started\",\"context\":\"TDR Jenkins build status\"}'"
+  }
+}
+
+// Call when build finishes successfully - in Jenkins pipeline 'post' actions
+def reportSuccessfulBuildToGitHub(String repo) {
+  withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_ACCESS_TOKEN')]) {
+    sh "curl -XPOST '${GitHubAPIURLHelper(repo)}' -H 'Authorization: bearer ${env.GITHUB_ACCESS_TOKEN}' --data '{\"state\":\"success\",\"target_url\":\"${env.BUILD_URL}\",\"description\":\"Jenkins build has completed successfully\",\"context\":\"TDR Jenkins build status\"}'"
+  }
+}
+
+// Call when build fails - in Jenkins pipeline 'post' actions
+def reportFailedBuildToGitHub(String repo) {
+  withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_ACCESS_TOKEN')]) {
+    sh "curl -XPOST '${GitHubAPIURLHelper(repo)}' -H 'Authorization: bearer ${env.GITHUB_ACCESS_TOKEN}' --data '{\"state\":\"failure\",\"target_url\":\"${env.BUILD_URL}\",\"description\":\"Jenkins build has failed\",\"context\":\"TDR Jenkins build status\"}'"
   }
 }
 
@@ -25,4 +36,11 @@ def getAccountNumberFromStage(String stage) {
     "prod": env.PROD_ACCOUNT
   ]
   return stageToAccountMap.get(stage)
+}
+
+// This is used to get the URL needed to send a POST request to the GitHub API to update the specified repo with the Jenkins build status. This returns the API URL.
+def GitHubAPIURLHelper(String repo) {
+  String sha = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
+  String url = "https://api.github.com/repos/nationalarchives/${repo}/statuses/${sha}"
+  return url
 }
