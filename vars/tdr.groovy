@@ -1,7 +1,8 @@
 // Call when deployment (intg or staging) has finished. Use the delay to ensure that the AWS load balancer allows access to the new version you are deploying.
-def runEndToEndTests(int delaySeconds, String stage) {
+def runEndToEndTests(int delaySeconds, String stage, String buildUrl) {
   String[] params = [
-    string(name: "STAGE", value: stage)
+    string(name: "STAGE", value: stage),
+    string(name: "DEPLOY_JOB_URL", value: buildUrl)
   ]
   build(job: "TDRAcceptanceTest", parameters: params, quietPeriod: delaySeconds, wait: false)
 }
