@@ -45,3 +45,21 @@ def githubApiStatusUrl(String repo) {
   String url = "https://api.github.com/repos/nationalarchives/${repo}/statuses/${sha}"
   return url
 }
+
+def updateECSContainer(Map params) {
+  String stage = params.stage
+  def accountNumber = getAccountNumberFromStage(stage)
+
+  sh "python3 /update_service.py ${accountNumber} ${params.stage} ${params.serviceName}"
+  slackSend color: "good", message: "*${params.serviceName}* :arrow_up: The app has been updated in ECS in the *${params.stage}* environment", channel: "#tdr-releases"
+}
+
+def tagDockerImageForDeploy(Map params) {
+  docker.withRegistry('', 'docker') {
+    sh "docker pull nationalarchives/${params.imageName}:${params.toDeploy}"
+    sh "docker tag nationalarchives/${params.imageName}:${params.toDeploy} nationalarchives/${params.imageName}:${params.stage}"
+    sh "docker push nationalarchives/${params.imageName}:${params.stage}"
+
+    slackSend color: "good", message: "*${params.imageName}* :whale: The '${params.toDeploy}' image has been tagged with '${params.stage}' in Docker Hub", channel: "#tdr-releases"
+  }
+}
