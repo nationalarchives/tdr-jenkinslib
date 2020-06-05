@@ -1,5 +1,3 @@
-evaluate(new File("./Tdr.groovy"))
-
 def call(Map params) {
     pipeline {
         agent {
@@ -31,7 +29,7 @@ def call(Map params) {
                 }
                 steps {
                     script {
-                        def accountNumber = getAccountNumberFromStage("intg")
+                        echo "${params.accountNumber}"
 
                         //sh "python3 /update_service.py ${params.accountNumber} ${params.STAGE} ${params.eCSService}"
                         slackSend color: "good", message: "*${params.eCSService}* :arrow_up: The app has been updated in ECS in the *intg* environment XXXX Account Number: ${accountNumber}", channel: "#bot-testing"
