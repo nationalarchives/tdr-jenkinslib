@@ -45,9 +45,11 @@ def call(Map params) {
                     label "master"
                 }
                 steps {
-                    sh "git branch -f ${params.RELEASE_BRANCH} HEAD"
+                    def releaseBranch = "release-${env.STAGE}"
+
+                    sh "git branch -f ${releaseBranch} HEAD"
                     sshagent(['github-jenkins']) {
-                        sh("git push -f origin ${params.RELEASE_BRANCH}")
+                        sh("git push -f origin ${releaseBranch}")
                     }
                 }
             }
@@ -56,7 +58,9 @@ def call(Map params) {
             success {
                 script {
                     if (params.STAGE == "intg") {
-                        tdr.runEndToEndTests(300, "${params.STAGE}", BUILD_URL)
+                        int delaySeconds = params.TEST_DELAY_SECONDS
+
+                        tdr.runEndToEndTests(delaySeconds, "${params.STAGE}", BUILD_URL)
                     }
                 }
             }
