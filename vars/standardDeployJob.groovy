@@ -9,7 +9,7 @@ def call(Map params) {
                     label "master"
                 }
                 parameters {
-                    choice(name: "STAGE", choices: ["intg", "staging"], description: "The stage you are building the auth server for")
+                    choice(name: "STAGE", choices: ["intg", "staging", "prod"], description: "The stage you are deploying to")
                     string(name: "TO_DEPLOY", description: "The git tag, branch or commit reference to deploy, e.g. 'v123'")
                 }
                 steps {
@@ -59,8 +59,8 @@ def call(Map params) {
                 script {
                     if (params.STAGE == "intg") {
                         int delaySeconds = params.TEST_DELAY_SECONDS
-
-                        tdr.runEndToEndTests(delaySeconds, "${params.STAGE}", BUILD_URL)
+                        
+                        tdr.runEndToEndTests(delaySeconds, params.STAGE, BUILD_URL)
                     }
                 }
             }
