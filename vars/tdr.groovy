@@ -42,14 +42,13 @@ def getAccountNumberFromStage(String stage) {
   return stageToAccountMap.get(stage)
 }
 
-def createGitHubBranch(String branchName) {
+def createAndPushGitHubBranch(String branchName) {
   sshagent(['github-jenkins']) {
     sh "git config --global user.email tna-digital-archiving-jenkins@nationalarchives.gov.uk"
     sh "git config --global user.name tna-digital-archiving-jenkins"
     sh "git checkout -b ${branchName}"
     sh "git push --set-upstream origin ${branchName}"
   }
-
 }
 
 def commitChangesToGitHubBranch(String commitMessage) {
