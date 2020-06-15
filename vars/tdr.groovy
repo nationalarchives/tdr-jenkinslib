@@ -42,6 +42,21 @@ def getAccountNumberFromStage(String stage) {
   return stageToAccountMap.get(stage)
 }
 
+def createGitHubBranch(Map params) {
+  sh "git config --global user.email ${params.userEmail}"
+  sh "git config --global user.name ${params.UserName}"
+  sh "git checkout -b ${params.branchName}"
+  sh "git push --set-upstream origin ${params.branchName}"
+}
+
+def commitChangesToGitHubBranch(Map params) {
+  sh "git config --global user.email ${params.userEmail}"
+  sh "git config --global user.name ${params.UserName}"
+  sh "git add ."
+  sh "git commit -m '${params.commitMessage}'"
+  sh "git push"
+}
+
 def createGitHubPullRequest(Map params) {
   withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_ACCESS_TOKEN')]) {
     sh "curl -XPOST 'https://api.github.com/repos/nationalarchives/${params.repo}/pulls' -H 'Authorization: bearer ${env.GITHUB_ACCESS_TOKEN}' --data '{\"title\":\"${params.pullRequestTitle}\",\"base\":\"${params.branchToMergeTo}\",\"head\":\"${params.branchToMerge}\",\"body\":\"Pull request created by ${params.buildUrl}\"}'"
