@@ -42,19 +42,24 @@ def getAccountNumberFromStage(String stage) {
   return stageToAccountMap.get(stage)
 }
 
-def createGitHubBranch(Map params) {
-  sh "git config --global user.email ${params.userEmail}"
-  sh "git config --global user.name ${params.UserName}"
-  sh "git checkout -b ${params.branchName}"
-  sh "git push --set-upstream origin ${params.branchName}"
+def createGitHubBranch(String branchName) {
+  sshagent(['github-jenkins']) {
+    sh "git config --global user.email tna-digital-archiving-jenkins@nationalarchives.gov.uk"
+    sh "git config --global user.name tna-digital-archiving-jenkins"
+    sh "git checkout -b ${branchName}"
+    sh "git push --set-upstream origin ${branchName}"
+  }
+
 }
 
-def commitChangesToGitHubBranch(Map params) {
-  sh "git config --global user.email ${params.userEmail}"
-  sh "git config --global user.name ${params.UserName}"
-  sh "git add ."
-  sh "git commit -m '${params.commitMessage}'"
-  sh "git push"
+def commitChangesToGitHubBranch(String commitMessage) {
+  sshagent(['github-jenkins']) {
+    sh "git config --global user.email tna-digital-archiving-jenkins@nationalarchives.gov.uk"
+    sh "git config --global user.name tna-digital-archiving-jenkins"
+    sh "git add ."
+    sh "git commit -m '${commitMessage}'"
+    sh "git push"
+  }
 }
 
 def createGitHubPullRequest(Map params) {
