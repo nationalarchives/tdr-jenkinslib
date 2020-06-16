@@ -42,12 +42,6 @@ def getAccountNumberFromStage(String stage) {
   return stageToAccountMap.get(stage)
 }
 
-def createGitHubBranch(String branchName) {
-  sshagent(['github-jenkins']) {
-    sh "git checkout -b ${branchName}"
-  }
-}
-
 def commitAndPushGitHubBranch(String commitMessage) {
   sshagent(['github-jenkins']) {
     sh "git config --global user.email tna-digital-archiving-jenkins@nationalarchives.gov.uk"
