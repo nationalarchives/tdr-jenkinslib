@@ -47,7 +47,7 @@ def configureJenkinsGitUser() {
   sh "git config --global user.name tna-digital-archiving-jenkins"
 }
 
-def pushGitHubBranch(String branch, String commitMessage) {
+def pushGitHubBranch(String branch) {
   sshagent(['github-jenkins']) {
     sh "git push origin ${branch}"
   }
