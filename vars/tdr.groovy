@@ -48,3 +48,9 @@ def githubApiStatusUrl(String repo) {
   String url = "https://api.github.com/repos/nationalarchives/${repo}/statuses/${sha}"
   return url
 }
+
+def postToSlack(Map params){
+  slackSend color: "${params.colour}",
+            message: "${params.message}",
+            channel: "#bot-testing" //#da-tdr-releases will be the actual channel bot-testing is the test one
+}
