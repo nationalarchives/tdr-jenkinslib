@@ -1,7 +1,7 @@
 def call(Map config) {
   library("tdr-jenkinslib")
     
-  def versionBumpBranch = "version-bump-${config.buildNumber}-${config.version}"
+  def versionBumpBranch = "version-bump-${config.buildNumber}"
     
   pipeline {
     agent {
