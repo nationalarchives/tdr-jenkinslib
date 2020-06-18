@@ -42,6 +42,23 @@ def getAccountNumberFromStage(String stage) {
   return stageToAccountMap.get(stage)
 }
 
+def configureJenkinsGitUser() {
+  sh "git config --global user.email tna-digital-archiving-jenkins@nationalarchives.gov.uk"
+  sh "git config --global user.name tna-digital-archiving-jenkins"
+}
+
+def pushGitHubBranch(String branch) {
+  sshagent(['github-jenkins']) {
+    sh "git push origin ${branch}"
+  }
+}
+
+def createGitHubPullRequest(Map params) {
+  withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_ACCESS_TOKEN')]) {
+    sh "curl -XPOST 'https://api.github.com/repos/nationalarchives/${params.repo}/pulls' -H 'Authorization: bearer ${env.GITHUB_ACCESS_TOKEN}' --data '{\"title\":\"${params.pullRequestTitle}\",\"base\":\"${params.branchToMergeTo}\",\"head\":\"${params.branchToMerge}\",\"body\":\"Pull request created by ${params.buildUrl}\"}'"
+  }
+}
+
 // This is used to get the URL needed to send a POST request to the GitHub API to update the specified repo with the Jenkins build status. This returns the API URL.
 def githubApiStatusUrl(String repo) {
   String sha = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
