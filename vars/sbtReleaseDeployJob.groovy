@@ -27,15 +27,15 @@ def call(Map config) {
 
           sh "git checkout ${versionBumpBranch}"
 
+          script {
+            tdr.pushGitHubBranch(versionBumpBranch)
+          }
+
           sshagent(['github-jenkins']) {
             sh "sbt +'release with-defaults'"
           }
 
           slackSend color: "good", message: "*${config.libraryName}* :arrow_up: The ${config.libraryName} package has been published", channel: "#tdr-releases"
-
-          script {
-            tdr.pushGitHubBranch(versionBumpBranch)
-          }
         }
       }
       stage("Create version bump pull request") {
