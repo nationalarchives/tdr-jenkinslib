@@ -13,29 +13,37 @@ def call(Map config) {
       choice(name: "STAGE", choices: ["intg", "staging", "prod"], description: "The stage you are deploying the ${config.libraryName} library to")
     }
     stages {
-      stage("Deploy to s3 and commit changes to GitHub") {
+      stage("Deploy to s3") {
         agent {
           ecs {
             inheritFrom "base"
             taskDefinitionOverride "arn:aws:ecs:eu-west-2:${env.MANAGEMENT_ACCOUNT}:task-definition/s3publish-${config.stage}:2"
           }
         }
-        steps {
-          script {
-            tdr.configureJenkinsGitUser()
+        stages {
+          stage("Create and push version bump GitHub branch") {
+            steps {
+              script {
+                tdr.configureJenkinsGitUser()
+              }
+
+              sh "git checkout ${versionBumpBranch}"
+
+              script {
+                tdr.pushGitHubBranch(versionBumpBranch)
+              }
+            }
           }
+          stage("Publish to s3") {
+            steps {
+              //Commits to origin branch
+              sshagent(['github-jenkins']) {
+                sh "sbt +'release with-defaults'"
+              }
 
-          sh "git checkout ${versionBumpBranch}"
-
-          script {
-            tdr.pushGitHubBranch(versionBumpBranch)
+              slackSend color: "good", message: "*${config.libraryName}* :arrow_up: The ${config.libraryName} package has been published", channel: "#tdr-releases"
+            }
           }
-
-          sshagent(['github-jenkins']) {
-            sh "sbt +'release with-defaults'"
-          }
-
-          slackSend color: "good", message: "*${config.libraryName}* :arrow_up: The ${config.libraryName} package has been published", channel: "#tdr-releases"
         }
       }
       stage("Create version bump pull request") {
