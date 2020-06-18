@@ -21,27 +21,30 @@ def call(Map config) {
           }
         }
         stages {
-          stage("Create and push version bump GitHub branch") {
+          stage("Create version bump GitHub branch") {
             steps {
               script {
                 tdr.configureJenkinsGitUser()
               }
 
-              sh "git checkout ${versionBumpBranch}"
-
-              script {
-                tdr.pushGitHubBranch(versionBumpBranch)
-              }
+              sh "git checkout -b ${versionBumpBranch}"
             }
           }
           stage("Publish to s3") {
             steps {
-              //Commits to origin branch
+              //Commits to branch
               sshagent(['github-jenkins']) {
                 sh "sbt +'release with-defaults'"
               }
 
               slackSend color: "good", message: "*${config.libraryName}* :arrow_up: The ${config.libraryName} package has been published", channel: "#tdr-releases"
+            }
+          }
+          stage("Push version bump GitHub branch") {
+            steps {
+              script {
+                tdr.pushGitHubBranch(versionBumpBranch)
+              }
             }
           }
         }
