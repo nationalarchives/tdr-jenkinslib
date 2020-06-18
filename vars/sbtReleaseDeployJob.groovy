@@ -13,7 +13,7 @@ def call(Map config) {
       choice(name: "STAGE", choices: ["intg", "staging", "prod"], description: "The stage you are deploying the ${config.libraryName} library to")
     }
     stages {
-      stage("Deploy to sonatype and commit changes to GitHub") {
+      stage("Deploy to s3 and commit changes to GitHub") {
         agent {
           ecs {
             inheritFrom "base"
