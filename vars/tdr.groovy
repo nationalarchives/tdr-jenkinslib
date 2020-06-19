@@ -49,7 +49,7 @@ def configureJenkinsGitUser() {
 
 def pushGitHubBranch(String branch) {
   sshagent(['github-jenkins']) {
-    sh "git push origin ${branch}"
+    sh "git push -u origin ${branch}"
   }
 }
 
