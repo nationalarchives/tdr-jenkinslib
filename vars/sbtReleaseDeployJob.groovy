@@ -31,7 +31,10 @@ def call(Map config) {
 
               //sbt release requires branch to be on origin first
               script {
-                tdr.pushGitHubBranch(versionBumpBranch)
+                //tdr.pushGitHubBranch(versionBumpBranch)
+                sshagent(['github-jenkins']) {
+                  sh "git push -u origin ${branch}"
+                }
               }
             }
           }
