@@ -49,7 +49,7 @@ def githubApiStatusUrl(String repo) {
   return url
 }
 
-def postToSlack(Map params) {
+def postToDaTdrSlackChannel(Map params) {
   slackSend color: "${params.colour}",
             message: "${params.message}",
             channel: "#da-tdr-releases"
