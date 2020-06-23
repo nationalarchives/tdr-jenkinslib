@@ -65,3 +65,9 @@ def githubApiStatusUrl(String repo) {
   String url = "https://api.github.com/repos/nationalarchives/${repo}/statuses/${sha}"
   return url
 }
+
+def postToDaTdrSlackChannel(Map params) {
+  slackSend color: "${params.colour}",
+          message: "${params.message}",
+          channel: "#da-tdr-releases"
+}
