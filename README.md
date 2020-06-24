@@ -14,8 +14,8 @@ TDR Jenkins has been configured to use the library functions with [Docker](https
 
 | File | Function | Parameters | Description | Result | 
 |---|---|---|---|---|
-| ecsDeployJob | call | config map: imageName, toDeploy, stage, ecsService, testDelaySecond | Standard TDR Jenkins pipeline job for ECS deployments. Called by client Jenkins jobs | No output, deploys to ECS |
-| sbtReleaseDeployJob | call | config map: libraryName, buildNumber, repo| Standard TDR Jenkins pipeline job for sbt library release and deployment | No output. Publishes updated sbt library to S3 |
+| ecsDeployJob | call | *config map*: imageName, toDeploy, stage, ecsService, testDelaySecond | Standard TDR Jenkins pipeline job for ECS deployments. Called by client Jenkins jobs | No output, deploys to ECS |
+| sbtReleaseDeployJob | call | *config map*: libraryName, buildNumber, repo| Standard TDR Jenkins pipeline job for sbt library release and deployment. Called by client Jenkins jobs | No output. Publishes updated sbt library to S3 |
 | tdr | runEndToEndTests | delaySeconds, stage  | Triggers the [E2E](https://github.com/nationalarchives/tdr-e2e-tests) tests to run. This should be used after any changes are made to projects that affect TDR.  | No output, triggers the E2E Jenkins job.  |
 | tdr | reportStartOfBuildToGitHub  | repo | Communicates the start of Jenkins build job for the specified GitHub repository. This is an important aspect to making sure code that breaks TDR is not then merged into the project and deployed.  | POSTs build info to the GitHub API  |
 | tdr | reportSuccessfulBuildToGitHub| repo | Communicates successful completion of the Jenkins build job for the specified GitHub repository. This is an important aspect to making sure code that breaks TDR is not then merged into the project and deployed.  | POSTs build info to the GitHub API  |
