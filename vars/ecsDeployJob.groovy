@@ -21,7 +21,7 @@ def call(Map config) {
               sh "docker tag nationalarchives/${config.imageName}:${config.toDeploy} nationalarchives/${config.imageName}:${config.stage}"
               sh "docker push nationalarchives/${config.imageName}:${config.stage}"
 
-              slackSend color: "good", message: "*${config.imageName}* :whale: The '${config.toDeploy}' image has been tagged with '${config.stage}' in Docker Hub", channel: "#tdr-releases"
+              tdr.postToDaTdrSlackChannel(colour: "good", message: "*${config.imageName}* :whale: The '${config.toDeploy}' image has been tagged with '${config.stage}' in Docker Hub")
             }
           }
         }
@@ -38,7 +38,7 @@ def call(Map config) {
             def accountNumber = tdr.getAccountNumberFromStage("${config.stage}")
 
             sh "python3 /update_service.py ${accountNumber} ${config.stage} ${config.ecsService}"
-            slackSend color: "good", message: "*${config.ecsService}* :arrow_up: The app has been updated in ECS in the *${config.stage}* environment", channel: "#tdr-releases"
+            tdr.postToDaTdrSlackChannel(colour: "good", message: "*${config.ecsService}* :arrow_up: The app has been updated in ECS in the *${config.stage}* environment")
           }
         }
       }
