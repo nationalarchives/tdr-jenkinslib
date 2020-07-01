@@ -41,8 +41,11 @@ def call(Map config) {
               sshagent(['github-jenkins']) {
                 sh "sbt +'release with-defaults'"
               }
-
-              slackSend color: "good", message: "*${config.libraryName}* :arrow_up: The ${config.libraryName} package has been published", channel: "#tdr-releases"
+              script {
+                tdr.postToDaTdrSlackChannel(colour: "good",
+                                            message: "*${config.libraryName}* :arrow_up: The ${config.libraryName} package has been published"
+                )
+              }
             }
           }
         }
