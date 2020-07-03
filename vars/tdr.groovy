@@ -33,6 +33,16 @@ def reportFailedBuildToGitHub(String repo) {
   }
 }
 
+def assembleAndStash(String libraryName) {
+  sh "sbt -no-colors assembly"
+  stash includes: "target/scala-2.13/${libraryName}.jar", name: "${libraryName}-jar"
+}
+
+def copyToS3CodeBucket(String libraryName, String versionTag) {
+  sh "cp target/scala-2.13/${libraryName}.jar /"
+  sh "aws s3 cp /${libraryName}.jar s3://tdr-backend-code-mgmt/${versionTag}/${libraryName}.jar"
+}
+
 def getAccountNumberFromStage(String stage) {
   def stageToAccountMap = [
     "intg": env.INTG_ACCOUNT,
