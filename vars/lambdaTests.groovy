@@ -50,11 +50,13 @@ def call(Map config) {
                                 sh "git tag ${versionTag}"
 
                                 tdr.pushGitHubBranch("master")
-                                deployToLambda(
-                                  stage: config.stage,
-                                  version : versionTag,
-                                  libraryName: config.libraryName
-                                )
+                                build(
+                                        job: "TDR ${config.libraryName.split("\\s+").collect { it.toLowerCase().capitalize()}} Lambda Deploy",
+                                        parameters: [
+                                                string(name: "STAGE", value: "intg"),
+                                                string(name: "TO_DEPLOY", value: versionTag)
+                                        ],
+                                        wait: false)
                             }
                         }
                     }
