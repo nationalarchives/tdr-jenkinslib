@@ -11,6 +11,7 @@ def call(Map config) {
         }
         parameters {
             choice(name: "STAGE", choices: ["intg", "staging", "prod"], description: "The stage you are building the front end for")
+            string(name: "VERSION", description: "The version to release")
         }
         stages {
             stage("Build") {
@@ -43,7 +44,7 @@ def call(Map config) {
                         steps {
                             script {
                                 unstash "${config.libraryName}-jar"
-                                copyToS3CodeBucket(config.libraryName, config.versionTag)
+                                tdr.copyToS3CodeBucket(config.libraryName, versionTag)
 
                                 tdr.configureJenkinsGitUser()
 
