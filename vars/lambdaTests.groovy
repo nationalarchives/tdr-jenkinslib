@@ -1,5 +1,5 @@
 def call(Map config) {
-    @Library("tdr-jenkinslib@lambda-methods")
+    @Library("tdr-jenkinslib@lambda-methods") _
 
     def versionTag = "v${env.BUILD_NUMBER}"
     def repo = "tdr-${config.libraryName}"
