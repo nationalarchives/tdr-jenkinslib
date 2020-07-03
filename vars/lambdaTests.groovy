@@ -1,8 +1,8 @@
 def call(Map config) {
-    library("tdr-jenkinslib")
+    library("tdr-jenkinslib@lambda-methods")
 
     def versionTag = "v${env.BUILD_NUMBER}"
-    def repo = "tdr-checksum"
+    def repo = "tdr-${config.libraryName}"
 
     pipeline {
         agent {
