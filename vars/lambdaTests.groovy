@@ -11,7 +11,6 @@ def call(Map config) {
         }
         parameters {
             choice(name: "STAGE", choices: ["intg", "staging", "prod"], description: "The stage you are building the front end for")
-            string(name: "VERSION", description: "The version to release")
         }
         stages {
             stage("Build") {
