@@ -1,3 +1,6 @@
+@groovy.transform.Field
+def scalaVersion = "scala-2.13"
+
 // Call when deployment (intg or staging) has finished. Use the delay to ensure that the AWS load balancer allows access to the new version you are deploying.
 def runEndToEndTests(int delaySeconds, String stage, String buildUrl) {
   build(
@@ -35,11 +38,11 @@ def reportFailedBuildToGitHub(String repo) {
 
 def assembleAndStash(String libraryName) {
   sh "sbt -no-colors assembly"
-  stash includes: "target/scala-2.13/${libraryName}.jar", name: "${libraryName}-jar"
+  stash includes: "target/${scalaVersion}/${libraryName}.jar", name: "${libraryName}-jar"
 }
 
 def copyToS3CodeBucket(String libraryName, String versionTag) {
-  sh "cp target/scala-2.13/${libraryName}.jar /"
+  sh "cp target/${scalaVersion}/${libraryName}.jar /"
   sh "aws s3 cp /${libraryName}.jar s3://tdr-backend-code-mgmt/${versionTag}/${libraryName}.jar"
 }
 
