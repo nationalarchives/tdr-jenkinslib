@@ -10,7 +10,7 @@ def call(Map config) {
             label "master"
         }
         parameters {
-            choice(name: "STAGE", choices: ["intg", "staging", "prod"], description: "The stage you are building the front end for")
+            choice(name: "STAGE", choices: ["intg", "staging", "prod"], description: "The stage you are running the lambda tests for")
         }
         stages {
             stage("Build") {
@@ -77,5 +77,4 @@ def call(Map config) {
             }
         }
     }
-
 }

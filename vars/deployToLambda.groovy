@@ -5,7 +5,7 @@ def call(Map config) {
             label "master"
         }
         parameters {
-            choice(name: "STAGE", choices: ["intg", "staging", "prod"], description: "The stage you are building the front end for")
+            choice(name: "STAGE", choices: ["intg", "staging", "prod"], description: "The stage you are deploying the lambda for")
             string(name: "TO_DEPLOY", description: "The git tag, branch or commit reference to deploy, e.g. '1'")
         }
         stages {
