@@ -19,7 +19,7 @@ def call(Map config) {
         }
         steps {
           script {
-            tdr.runGitSecrets(repo)
+            tdr.runGitSecrets(config.libraryName)
           }
         }
       }
