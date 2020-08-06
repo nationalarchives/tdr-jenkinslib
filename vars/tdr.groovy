@@ -13,6 +13,11 @@ def runEndToEndTests(int delaySeconds, String stage, String buildUrl) {
     wait: false)
 }
 
+def runGitSecrets(String repo) {
+  sh "git-secrets --install"
+  sh "git-secrets --scan"
+}
+
 //It is important for TDR devs to know that the code they want to merge doesn't break TDR. By sending the build status for every commit (all branches) to GitHub we can ensure code that breaks TDR cannot be merged.
 
 // Call this when build starts (to let person who made changes know they are being checked) - call within first 'stage' of Jenkins pipeline actions.
