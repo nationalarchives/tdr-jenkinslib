@@ -13,6 +13,16 @@ def call(Map config) {
             choice(name: "STAGE", choices: ["intg", "staging", "prod"], description: "The stage you are running the lambda tests for")
         }
         stages {
+            stage("Run git secrets") {
+                agent {
+                    label "master"
+                }
+                steps {
+                    script {
+                        tdr.runGitSecrets(repo)
+                    }
+                }
+            }
             stage("Build") {
                 agent {
                     ecs {
