@@ -13,10 +13,14 @@ def runEndToEndTests(int delaySeconds, String stage, String buildUrl) {
     wait: false)
 }
 
-def runGitSecrets(String repo) {
-  sh "git-secrets --install -f"
-  sh "git-secrets --register-aws"
-  sh "git-secrets --scan"
+def runGitSecrets(repo) {
+  try {
+    sh "git-secrets --scan"
+  } catch(e) {
+    tdr.postToDaTdrSlackChannel(colour: "danger", message: "Secrets found in repository ${repo}")
+    exit 1
+  }
+
 }
 
 //It is important for TDR devs to know that the code they want to merge doesn't break TDR. By sending the build status for every commit (all branches) to GitHub we can ensure code that breaks TDR cannot be merged.
