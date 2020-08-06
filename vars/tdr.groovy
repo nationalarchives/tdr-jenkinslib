@@ -15,8 +15,10 @@ def runEndToEndTests(int delaySeconds, String stage, String buildUrl) {
 
 def runGitSecrets(repo) {
   def exitCode = sh(script: "git-secrets --scan", returnStatus: true)
+  echo exitCode
   if(exitCode == 1) {
     tdr.postToDaTdrSlackChannel(colour: "danger", message: "Secrets found in repository ${repo}")
+    echo "Posted to slack"
     exit 1
   }
 }
