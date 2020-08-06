@@ -15,6 +15,7 @@ def runEndToEndTests(int delaySeconds, String stage, String buildUrl) {
 
 def runGitSecrets(String repo) {
   sh "git-secrets --install -f"
+  sh "git-secrets --register-aws"
   sh "git-secrets --scan"
 }
 
