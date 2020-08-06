@@ -74,7 +74,11 @@ def createGitHubPullRequest(Map params) {
 
 // This is used to get the URL needed to send a POST request to the GitHub API to update the specified repo with the Jenkins build status. This returns the API URL.
 def githubApiStatusUrl(String repo) {
-  String sha = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
+  String cmd = "git rev-parse HEAD"
+  if(sh(script: cmd, returnStatus: true) == 128) {
+    checkout scm
+  }
+  String sha = sh(script: cmd, returnStdout: true).trim()
   String url = "https://api.github.com/repos/nationalarchives/${repo}/statuses/${sha}"
   return url
 }
