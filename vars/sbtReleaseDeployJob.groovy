@@ -13,6 +13,16 @@ def call(Map config) {
       choice(name: "STAGE", choices: ["intg", "staging", "prod"], description: "The stage you are deploying the ${config.libraryName} library to")
     }
     stages {
+      stage("Run git secrets") {
+        agent {
+          label "master"
+        }
+        steps {
+          script {
+            tdr.runGitSecrets(config.libraryName)
+          }
+        }
+      }
       stage("Deploy to s3") {
         agent {
           ecs {
