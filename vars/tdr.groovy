@@ -17,7 +17,7 @@ def runGitSecrets(repo) {
   sh "set +e"
   def exitCode = sh(script: "git-secrets --scan", returnStatus: true)
   sh "set -e"
-  if(exitCode == 1) {
+  if(exitCode != 0) {
     postToDaTdrSlackChannel([colour: "danger", message: "Secrets found in repository ${repo} ${BUILD_URL}"])
     sh "false"
   }
