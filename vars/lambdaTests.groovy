@@ -31,7 +31,7 @@ def call(Map config) {
                 }
                 steps {
                     script {
-                        tdr.reportStartOfBuildToGitHub(repo)
+                        tdr.reportStartOfBuildToGitHub(repo, env.GIT_COMMIT)
                         tdr.assembleAndStash(config.libraryName)
                     }
                 }
@@ -77,12 +77,12 @@ def call(Map config) {
         post {
             failure {
                 script {
-                    tdr.reportFailedBuildToGitHub(repo)
+                    tdr.reportFailedBuildToGitHub(repo, env.GIT_COMMIT)
                 }
             }
             success {
                 script {
-                    tdr.reportSuccessfulBuildToGitHub(repo)
+                    tdr.reportSuccessfulBuildToGitHub(repo, env.GIT_COMMIT)
                 }
             }
         }
