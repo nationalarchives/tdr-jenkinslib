@@ -26,23 +26,24 @@ def runGitSecrets(repo) {
 //It is important for TDR devs to know that the code they want to merge doesn't break TDR. By sending the build status for every commit (all branches) to GitHub we can ensure code that breaks TDR cannot be merged.
 
 // Call this when build starts (to let person who made changes know they are being checked) - call within first 'stage' of Jenkins pipeline actions.
-def reportStartOfBuildToGitHub(String repo) {
+def reportStartOfBuildToGitHub(String repo, String sha='null') {
   withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_ACCESS_TOKEN')]) {
-    sh "curl -XPOST '${githubApiStatusUrl(repo)}' -H 'Authorization: bearer ${env.GITHUB_ACCESS_TOKEN}' --data '{\"state\":\"pending\",\"target_url\":\"${env.BUILD_URL}\",\"description\":\"Jenkins build has started\",\"context\":\"TDR Jenkins build status\"}'"
+    sh "curl -XPOST '${githubApiStatusUrl(repo, sha)}' -H 'Authorization: bearer ${env.GITHUB_ACCESS_TOKEN}' --data '{\"state\":\"pending\",\"target_url\":\"${env.BUILD_URL}\",\"description\":\"Jenkins build has started\",\"context\":\"TDR Jenkins build status\"}'"
   }
 }
 
+
 // Call when build finishes successfully - in Jenkins pipeline 'post' actions
-def reportSuccessfulBuildToGitHub(String repo) {
+def reportSuccessfulBuildToGitHub(String repo, String sha=null) {
   withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_ACCESS_TOKEN')]) {
-    sh "curl -XPOST '${githubApiStatusUrl(repo)}' -H 'Authorization: bearer ${env.GITHUB_ACCESS_TOKEN}' --data '{\"state\":\"success\",\"target_url\":\"${env.BUILD_URL}\",\"description\":\"Jenkins build has completed successfully\",\"context\":\"TDR Jenkins build status\"}'"
+    sh "curl -XPOST '${githubApiStatusUrl(repo, sha)}' -H 'Authorization: bearer ${env.GITHUB_ACCESS_TOKEN}' --data '{\"state\":\"success\",\"target_url\":\"${env.BUILD_URL}\",\"description\":\"Jenkins build has completed successfully\",\"context\":\"TDR Jenkins build status\"}'"
   }
 }
 
 // Call when build fails - in Jenkins pipeline 'post' actions
-def reportFailedBuildToGitHub(String repo) {
+def reportFailedBuildToGitHub(String repo, String sha=null) {
   withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_ACCESS_TOKEN')]) {
-    sh "curl -XPOST '${githubApiStatusUrl(repo)}' -H 'Authorization: bearer ${env.GITHUB_ACCESS_TOKEN}' --data '{\"state\":\"failure\",\"target_url\":\"${env.BUILD_URL}\",\"description\":\"Jenkins build has failed\",\"context\":\"TDR Jenkins build status\"}'"
+    sh "curl -XPOST '${githubApiStatusUrl(repo, sha)}' -H 'Authorization: bearer ${env.GITHUB_ACCESS_TOKEN}' --data '{\"state\":\"failure\",\"target_url\":\"${env.BUILD_URL}\",\"description\":\"Jenkins build has failed\",\"context\":\"TDR Jenkins build status\"}'"
   }
 }
 
@@ -83,14 +84,18 @@ def createGitHubPullRequest(Map params) {
 }
 
 // This is used to get the URL needed to send a POST request to the GitHub API to update the specified repo with the Jenkins build status. This returns the API URL.
-def githubApiStatusUrl(String repo) {
-  String cmd = "git rev-parse HEAD"
-  if(sh(script: cmd, returnStatus: true) == 128) {
-    checkout scm
+def githubApiStatusUrl(String repo, String sha=null) {
+  if (sha != null) {
+    String url = "https://api.github.com/repos/nationalarchives/${repo}/statuses/${sha}"
+    return url
+  } else {
+    String cmd = "git rev-parse HEAD"
+    if(sh(script: cmd, returnStatus: true) == 128) {
+      checkout scm
+    }
+    String url = "https://api.github.com/repos/nationalarchives/${repo}/statuses/${sha}"
+    return url
   }
-  String sha = sh(script: cmd, returnStdout: true).trim()
-  String url = "https://api.github.com/repos/nationalarchives/${repo}/statuses/${sha}"
-  return url
 }
 
 def postToDaTdrSlackChannel(Map params) {
