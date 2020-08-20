@@ -93,7 +93,8 @@ def githubApiStatusUrl(String repo, String sha='UNKNOWN_SHA') {
     if(sh(script: cmd, returnStatus: true) == 128) {
       checkout scm
     }
-    String url = "https://api.github.com/repos/nationalarchives/${repo}/statuses/${sha}"
+    String commitSHA = sh(script: cmd, returnStdout: true).trim()
+    String url = "https://api.github.com/repos/nationalarchives/${repo}/statuses/${commitSHA}"
     return url
   }
 }
