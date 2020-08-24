@@ -62,7 +62,7 @@ def call(Map config) {
 
                                 tdr.pushGitHubBranch("master")
                                 build(
-                                        job: "TDR ${config.libraryName.split("\\s+").collect { it.toLowerCase().capitalize()}} Lambda Deploy",
+                                        job: config.deployJobName,
                                         parameters: [
                                                 string(name: "STAGE", value: "intg"),
                                                 string(name: "TO_DEPLOY", value: versionTag)
