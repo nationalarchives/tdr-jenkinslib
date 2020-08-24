@@ -58,9 +58,10 @@ def call(Map config) {
                 tdr.configureJenkinsGitUser()
 
                 sh "git tag ${versionTag}"
-                sh "git checkout ${env.BRANCH_NAME}"
+                sshagent(['github-jenkins']) {
+                  sh("git push origin ${versionTag}")
+                }
 
-                tdr.pushGitHubBranch("master")
                 build(
                   job: config.deployJobName,
                   parameters: [
