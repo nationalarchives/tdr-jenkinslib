@@ -19,7 +19,7 @@ def call(Map config) {
                 steps {
                     script {
                         def accountNumber = tdr.getAccountNumberFromStage(config.stage)
-                        sh "python3 /deploy_lambda_from_s3.py ${accountNumber} ${config.stage} tdr-${config.libraryName}-${config.stage} tdr-backend-code-mgmt ${config.version}/${config.libraryName}.jar"
+                        sh "python3 /deploy_lambda_from_s3.py ${accountNumber} ${config.stage} tdr-${config.libraryName}-${config.stage} tdr-backend-code-mgmt ${config.version}/${config.deploymentPackageName}"
                     }
                 }
             }
