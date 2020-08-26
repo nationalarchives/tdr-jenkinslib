@@ -23,6 +23,18 @@ def call(Map config) {
           }
         }
       }
+      stage("Update release branch") {
+        steps {
+          script {
+            def releaseBranch = "release-${config.stage}"
+
+            sh "git branch -f ${releaseBranch} HEAD"
+            sshagent(['github-jenkins']) {
+              sh("git push -f origin ${releaseBranch}")
+            }
+          }
+        }
+      }
     }
     post {
       success {
