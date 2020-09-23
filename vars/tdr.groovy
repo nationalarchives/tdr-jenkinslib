@@ -83,6 +83,13 @@ def createGitHubPullRequest(Map params) {
   }
 }
 
+def buildAndPushImage(String imageName, String stage) {
+  def imageTag = "${env.MANAGEMENT_ACCOUNT}.dkr.ecr.eu-west-2.amazonaws.com/${imageName}:${stage}"
+  sh "aws ecr get-login --region eu-west-2 --no-include-email | bash"
+  sh "docker build -t ${imageTag} ."
+  sh "docker push ${imageTag}"
+}
+
 // This is used to get the URL needed to send a POST request to the GitHub API to update the specified repo with the Jenkins build status. This returns the API URL.
 def githubApiStatusUrl(String repo, String sha) {
   String url = "https://api.github.com/repos/nationalarchives/${repo}/statuses/${sha}"
