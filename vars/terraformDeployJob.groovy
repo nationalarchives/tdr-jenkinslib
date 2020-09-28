@@ -13,9 +13,9 @@ def call(Map config) {
     stages {
       stage("Run git secrets") {
         steps {
-        script {
+          script {
             tdr.runGitSecrets(config.repo)
-        }
+          }
         }
       }
       stage('Run Terraform build') {
