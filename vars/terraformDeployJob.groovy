@@ -35,7 +35,7 @@ def call(Map config) {
 				stages {
 					stage('Set up Terraform workspace') {
 						steps {
-							dir("${config.terraformDirectory}") {
+							dir("${config.terraformDirectoryPath}") {
 								echo 'Initializing Terraform...'
 								sh "git clone https://github.com/nationalarchives/tdr-terraform-modules.git"
 								sshagent(['github-jenkins']) {
@@ -51,7 +51,7 @@ def call(Map config) {
 					}
 					stage('Run Terraform plan') {
 						steps {
-							dir("${config.terraformDirectory}") {
+							dir("${config.terraformDirectoryPath}") {
 								echo 'Running Terraform plan...'
 								sh 'terraform plan'
 								script {
