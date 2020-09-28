@@ -7,11 +7,6 @@ def call(Map config) {
     agent {
       label "master"
     }
-    //Parameters section required for display in client Jenkins jobs GUI.
-    //Selected values are not accessible within the function and must be passed into the function via the config map
-    parameters {
-      choice(name: "STAGE", choices: ["intg", "staging", "prod"], description: "The stage you are deploying the ${config.libraryName} library to")
-    }
     stages {
       stage("Run git secrets") {
         agent {
@@ -27,7 +22,7 @@ def call(Map config) {
         agent {
           ecs {
             inheritFrom "base"
-            taskDefinitionOverride "arn:aws:ecs:eu-west-2:${env.MANAGEMENT_ACCOUNT}:task-definition/s3publish-${config.stage}:2"
+            taskDefinitionOverride "arn:aws:ecs:eu-west-2:${env.MANAGEMENT_ACCOUNT}:task-definition/s3publish:2"
           }
         }
         stages {
