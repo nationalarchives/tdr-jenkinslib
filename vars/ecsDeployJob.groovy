@@ -16,9 +16,9 @@ def call(Map config) {
         }
         steps {
           script {
-            def image = "${env.MANAGEMENT_ACCOUNT}.dkr.ecr.eu-west-2.amazonaws.com/${config.imageName}:${config.toDeploy}"
+            def image = "${env.MANAGEMENT_ACCOUNT}.dkr.ecr.eu-west-2.amazonaws.com/${config.imageName}"
             sh "aws ecr get-login --region eu-west-2 --no-include-email | bash"
-            sh "docker pull "
+            sh "docker pull ${image}:${config.toDeploy}"
             sh "docker tag ${image}:${config.toDeploy} ${image}:${config.stage}"
             sh "docker push ${image}:${config.stage}"
 
