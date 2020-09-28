@@ -1,6 +1,6 @@
 def call(Map config) {
 	library("tdr-jenkinslib")
-	def terraformWorkspace = config.stage == "management" ? "default" : config.stage
+	def terraformWorkspace = config.stage == "mgmt" ? "default" : config.stage
 
 	pipeline {
 		agent {
@@ -35,28 +35,32 @@ def call(Map config) {
 				stages {
 					stage('Set up Terraform workspace') {
 						steps {
-							echo 'Initializing Terraform...'
-							sh "git clone https://github.com/nationalarchives/tdr-terraform-modules.git"
-							sshagent(['github-jenkins']) {
-								sh("git clone git@github.com:nationalarchives/tdr-configurations.git")
+							dir("${config.terraformDirectory}") {
+								echo 'Initializing Terraform...'
+								sh "git clone https://github.com/nationalarchives/tdr-terraform-modules.git"
+								sshagent(['github-jenkins']) {
+									sh("git clone git@github.com:nationalarchives/tdr-configurations.git")
+								}
+								sh 'terraform init'
+								//If Terraform workspace exists continue
+								sh "terraform workspace new ${terraformWorkspace} || true"
+								sh "terraform workspace select ${terraformWorkspace}"
+								sh 'terraform workspace list'
 							}
-							sh 'terraform init'
-							//If Terraform workspace exists continue
-							sh "terraform workspace new ${terraformWorkspace} || true"
-							sh "terraform workspace select ${terraformWorkspace}"
-							sh 'terraform workspace list'
 						}
 					}
 					stage('Run Terraform plan') {
 						steps {
-							echo 'Running Terraform plan...'
-							sh 'terraform plan'
-							script {
-								tdr.postToDaTdrSlackChannel(colour: "good",
-												message: "Terraform plan complete for ${config.stage} TDR environment. " +
-																"View here for plan: https://jenkins.tdr-management.nationalarchives.gov.uk/job/" +
-																"${JOB_NAME.replaceAll(' ', '%20')}/${BUILD_NUMBER}/console"
-								)
+							dir("${config.terraformDirectory}") {
+								echo 'Running Terraform plan...'
+								sh 'terraform plan'
+								script {
+									tdr.postToDaTdrSlackChannel(colour: "good",
+									  message: "Terraform plan complete for ${config.stage} TDR environment. " +
+										  "View here for plan: https://jenkins.tdr-management.nationalarchives.gov.uk/job/" +
+											"${JOB_NAME.replaceAll(' ', '%20')}/${BUILD_NUMBER}/console"
+									)
+								}
 							}
 						}
 					}
@@ -65,9 +69,9 @@ def call(Map config) {
 							echo 'Sending request for approval of Terraform plan...'
 							script {
 								tdr.postToDaTdrSlackChannel(colour: "good",
-												message: "Do you approve Terraform deployment for ${config.stage} TDR ${config.deployment}? " +
-																"https://jenkins.tdr-management.nationalarchives.gov.uk/job/" +
-																"${JOB_NAME.replaceAll(' ', '%20')}/${BUILD_NUMBER}/input/"
+								  message: "Do you approve Terraform deployment for ${config.stage} TDR ${config.deployment}? " +
+									  "https://jenkins.tdr-management.nationalarchives.gov.uk/job/" +
+										"${JOB_NAME.replaceAll(' ', '%20')}/${BUILD_NUMBER}/input/"
 								)
 							}
 							input "Do you approve deployment to ${config.stage}?"
@@ -80,7 +84,7 @@ def call(Map config) {
 							echo 'Changes applied'
 							script {
 								tdr.postToDaTdrSlackChannel(colour: "good",
-												message: "Deployment complete for ${config.stage} TDR ${config.deployment}"
+								  message: "Deployment complete for ${config.stage} TDR ${config.deployment}"
 								)
 							}
 						}
@@ -95,9 +99,9 @@ def call(Map config) {
 			}
 			success {
 				script {
-					if (config.STAGE == "intg") {
+					if (config.stage == "intg") {
 						int delaySeconds = config.testDelaySeconds
-						
+
 						tdr.runEndToEndTests(delaySeconds, config.stage, BUILD_URL)
 					}
 				}
