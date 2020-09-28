@@ -59,6 +59,7 @@ def copyToS3CodeBucket(String libraryName, String versionTag) {
 
 def getAccountNumberFromStage(String stage) {
   def stageToAccountMap = [
+    "mgmt": env.MANAGEMENT_ACCOUNT,
     "intg": env.INTG_ACCOUNT,
     "staging": env.STAGING_ACCOUNT,
     "prod": env.PROD_ACCOUNT
