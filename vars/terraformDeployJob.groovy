@@ -54,7 +54,7 @@ def call(Map config) {
                 sh 'terraform plan'
                 script {
                   tdr.postToDaTdrSlackChannel(colour: "good",
-                    message: "Terraform plan complete for ${config.stage} TDR environment. " +
+                    message: "Terraform plan complete for ${config.stage} TDR ${config.deployment}. " +
                       "View here for plan: https://jenkins.tdr-management.nationalarchives.gov.uk/job/" +
                       "${JOB_NAME.replaceAll(' ', '%20')}/${BUILD_NUMBER}/console"
                   )
