@@ -16,13 +16,13 @@ def call(Map config) {
         }
         steps {
           script {
-            docker.withRegistry('', 'docker') {
-              sh "docker pull nationalarchives/${config.imageName}:${config.toDeploy}"
-              sh "docker tag nationalarchives/${config.imageName}:${config.toDeploy} nationalarchives/${config.imageName}:${config.stage}"
-              sh "docker push nationalarchives/${config.imageName}:${config.stage}"
+            def image = "${env.MANAGEMENT_ACCOUNT}.dkr.ecr.eu-west-2.amazonaws.com/${config.imageName}"
+            sh "aws ecr get-login --region eu-west-2 --no-include-email | bash"
+            sh "docker pull ${image}:${config.toDeploy}"
+            sh "docker tag ${image}:${config.toDeploy} ${image}:${config.stage}"
+            sh "docker push ${image}:${config.stage}"
 
-              tdr.postToDaTdrSlackChannel(colour: "good", message: "*${config.imageName}* :whale: The '${config.toDeploy}' image has been tagged with '${config.stage}' in Docker Hub")
-            }
+            tdr.postToDaTdrSlackChannel(colour: "good", message: "*${config.imageName}* :whale: The '${config.toDeploy}' image has been tagged with '${config.stage}' in ECR")
           }
         }
       }
