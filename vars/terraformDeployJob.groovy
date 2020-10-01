@@ -91,7 +91,7 @@ def call(Map config) {
       }
     }
     post {
-      always {
+      cleanup {
         echo 'Deleting Jenkins workspace...'
         deleteDir()
       }
