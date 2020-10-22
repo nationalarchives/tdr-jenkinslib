@@ -16,7 +16,6 @@ def call(Map config) {
         agent {
           ecs {
             inheritFrom 'terraform'
-            taskrole "arn:aws:iam::${env.MANAGEMENT_ACCOUNT}:role/${config.taskRoleName}"
           }
         }
         environment {
