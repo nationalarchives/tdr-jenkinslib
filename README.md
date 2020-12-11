@@ -28,7 +28,7 @@ TDR Jenkins has been configured to use the library functions with [Docker](https
 ## Testing functions on Jenkins
 
 1. Create a branch with the new function(s) on in the tdr-jenkinslib repo;
-2. In the Jenkins file that calls the new function(s) add the branch import directly: `@Library("tdr-jenkinslib@[name of branch]") _`
+2. In the Jenkins file that calls the new function(s) add the branch import directly: `@Library("tdr-jenkinslib@name-of-branch") _`
 3. Create a test multi-branch pipeline job in Jenkins
 4. In the pipeline config add the library config to the Pipeline Libraries. Set the default to the name of the branch with the function(s) to test.
 5. When you replay a branch on the pipeline, all the code from the Jenkins file AND the library is available for editing
