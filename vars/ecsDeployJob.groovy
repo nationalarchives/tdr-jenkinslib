@@ -68,6 +68,20 @@ def call(Map config) {
           }
         }
       }
+      failure {
+        script {
+          tdr.postToDaTdrSlackChannel(colour: "danger",
+            message: "*${config.ecsService}* :warning: Deployment of *${config.toDeploy}* to the *${config.stage}* environment has failed"
+          )
+        }
+      }
+      unstable {
+        script {
+          tdr.postToDaTdrSlackChannel(colour: "warning",
+            message: "*${config.ecsService}* :warning: Deployment of *${config.toDeploy}* to the *${config.stage}* environment was marked as 'unstable'"
+          )
+        }
+      }
     }
   }
 }
