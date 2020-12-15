@@ -11,9 +11,6 @@ def call(Map config) {
     }
     stages {
       stage("Docker") {
-        agent {
-          label "master"
-        }
         steps {
           script {
             def image = "${env.MANAGEMENT_ACCOUNT}.dkr.ecr.eu-west-2.amazonaws.com/${config.imageName}"
@@ -43,9 +40,6 @@ def call(Map config) {
         }
       }
       stage("Update release branch") {
-        agent {
-          label "master"
-        }
         steps {
           script {
             def releaseBranch = "release-${config.stage}"
