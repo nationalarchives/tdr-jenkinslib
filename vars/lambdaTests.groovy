@@ -79,9 +79,24 @@ def call(Map config) {
       failure {
         script {
           tdr.reportFailedBuildToGitHub(repo, env.GIT_COMMIT)
+
+          if (env.BRANCH_NAME == 'master') {
+            tdr.postToDaTdrSlackChannel(colour: "danger",
+              message: "*${config.libraryName}* :warning: Master branch build failed: ${env.BUILD_URL}"
+            )
+          }
         }
-    }
-    success {
+      }
+      unstable {
+        script {
+          if (env.BRANCH_NAME == 'master') {
+            tdr.postToDaTdrSlackChannel(colour: "warning",
+              message: "*${config.libraryName}* :warning: Master branch build marked as unstable: ${env.BUILD_URL}"
+            )
+          }
+        }
+      }
+      success {
         script {
           tdr.reportSuccessfulBuildToGitHub(repo, env.GIT_COMMIT)
         }
