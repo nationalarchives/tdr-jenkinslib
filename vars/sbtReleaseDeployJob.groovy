@@ -22,7 +22,7 @@ def call(Map config) {
         agent {
           ecs {
             inheritFrom "base"
-            taskDefinitionOverride "arn:aws:ecs:eu-west-2:${env.MANAGEMENT_ACCOUNT}:task-definition/s3publish:2"
+            taskDefinitionOverride "arn:aws:ecs:eu-west-2:${env.MANAGEMENT_ACCOUNT}:task-definition/s3publish"
           }
         }
         stages {
