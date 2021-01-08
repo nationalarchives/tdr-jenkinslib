@@ -86,7 +86,7 @@ def createGitHubPullRequest(Map params) {
 def buildAndPushImage(String imageName, String stage) {
   def imageTag = "${env.MANAGEMENT_ACCOUNT}.dkr.ecr.eu-west-2.amazonaws.com/${imageName}:${stage}"
   sh "aws ecr get-login --region eu-west-2 --no-include-email | bash"
-  sh "docker build --no-cache -t ${imageTag} ."
+  sh "docker build --pull --no-cache -t ${imageTag} ."
   sh "docker push ${imageTag}"
 }
 
