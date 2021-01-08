@@ -53,8 +53,7 @@ def assembleAndStash(String libraryName) {
 }
 
 def copyToS3CodeBucket(String libraryName, String versionTag) {
-  sh "cp target/${scalaVersion}/${libraryName}.jar /"
-  sh "aws s3 cp /${libraryName}.jar s3://tdr-backend-code-mgmt/${versionTag}/${libraryName}.jar"
+  sh "aws s3 cp target/${scalaVersion}/${libraryName}.jar s3://tdr-backend-code-mgmt/${versionTag}/${libraryName}.jar"
 }
 
 def getAccountNumberFromStage(String stage) {
