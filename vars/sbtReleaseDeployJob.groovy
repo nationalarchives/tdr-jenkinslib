@@ -44,7 +44,9 @@ def call(Map config) {
             steps {
               //Commits to origin branch
               sshagent(['github-jenkins']) {
-                sh "sbt +'release with-defaults'"
+                withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_TOKEN')]) {
+                  sh "sbt +'release with-defaults'"
+                }
               }
               script {
                 tdr.postToDaTdrSlackChannel(colour: "good",
