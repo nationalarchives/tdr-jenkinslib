@@ -2,6 +2,7 @@ def call(Map config) {
   library("tdr-jenkinslib")
     
   def versionBumpBranch = "version-bump-${config.buildNumber}"
+  def pullRequestTitlePrefix = "Version Bump from build number"
     
   pipeline {
     agent {
@@ -23,6 +24,15 @@ def call(Map config) {
           ecs {
             inheritFrom "base"
             taskDefinitionOverride "arn:aws:ecs:eu-west-2:${env.MANAGEMENT_ACCOUNT}:task-definition/s3publish"
+          }
+        }
+        when {
+          //Only trigger version bump for non-version bump commits
+          //Prevents infinite loop of creating pull requests for version bumps
+          //Merge version bump commit messages in format: 'Version bump from build number 000'
+          expression {
+            currentGitCommit = sh(script: "git log -n 1", returnStdout: true).trim()
+            return !(currentGitCommit =~ /$pullRequestTitlePrefix (\d+)/)
           }
         }
         stages {
@@ -64,7 +74,7 @@ def call(Map config) {
         steps {
           script {
             tdr.createGitHubPullRequest(
-              pullRequestTitle: "Version Bump from build number ${config.buildNumber}",
+              pullRequestTitle: "${pullRequestTitlePrefix} ${config.buildNumber}",
               buildUrl: env.BUILD_URL,
               repo: "${config.repo}",
               branchToMergeTo: "master",
