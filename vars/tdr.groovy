@@ -1,5 +1,6 @@
 @groovy.transform.Field
 def scalaVersion = "scala-2.13"
+def awsAccountNumCheckGitSecrets = "591542846629"
 
 // Call when deployment (intg or staging) has finished. Use the delay to ensure that the AWS load balancer allows access to the new version you are deploying.
 def runEndToEndTests(int delaySeconds, String stage, String buildUrl) {
