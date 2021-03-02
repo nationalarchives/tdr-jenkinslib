@@ -19,7 +19,7 @@ pipeline {
   post {
     failure {
       script {
-        tdr.reportFailedBuiltToGitHub(repo, env.GIT_COMMIT)
+        tdr.reportFailedBuildToGitHub(repo, env.GIT_COMMIT)
       }
     }
     success {
