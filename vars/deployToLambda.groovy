@@ -39,7 +39,9 @@ def call(Map config) {
     post {
       success {
         script {
-          tdr.runEndToEndTests(0, config.stage, BUILD_URL)
+          if(config.stage != "prod") {
+            tdr.runEndToEndTests(0, config.stage, BUILD_URL)
+          }
         }
       }
     }

@@ -55,7 +55,7 @@ def call(Map config) {
     post {
       success {
         script {
-          if (config.stage == "intg") {
+          if (config.stage != "prod") {
             int delaySeconds = config.testDelaySeconds
 
             tdr.runEndToEndTests(delaySeconds, config.stage, BUILD_URL)
