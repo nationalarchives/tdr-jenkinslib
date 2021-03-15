@@ -27,6 +27,7 @@ def call(Map config) {
         agent {
           ecs {
             inheritFrom "transfer-frontend"
+            taskDefinitionOverride "arn:aws:ecs:eu-west-2:${env.MANAGEMENT_ACCOUNT}:task-definition/sbtwithpostgres"
           }
         }
         steps {
