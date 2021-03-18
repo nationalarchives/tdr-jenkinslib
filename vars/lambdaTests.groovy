@@ -1,4 +1,3 @@
-
 def call(Map config) {
   library("tdr-jenkinslib")
 
@@ -46,7 +45,7 @@ def call(Map config) {
         }
 
         when {
-          expression { env.BRANCH_NAME == "master"}
+          expression { ["main", "master"].contains(env.BRANCH_NAME) }
         }
 
         stages {
@@ -81,18 +80,18 @@ def call(Map config) {
         script {
           tdr.reportFailedBuildToGitHub(repo, env.GIT_COMMIT)
 
-          if (env.BRANCH_NAME == 'master') {
+          if (["main", "master"].contains(env.BRANCH_NAME)) {
             tdr.postToDaTdrSlackChannel(colour: "danger",
-              message: "*${config.libraryName}* :warning: Master branch build failed: ${env.BUILD_URL}"
+              message: "*${config.libraryName}* :warning: ${env.BRANCH_NAME.capitalize()} branch build failed: ${env.BUILD_URL}"
             )
           }
         }
       }
       unstable {
         script {
-          if (env.BRANCH_NAME == 'master') {
+          if (["main", "master"].contains(env.BRANCH_NAME)) {
             tdr.postToDaTdrSlackChannel(colour: "warning",
-              message: "*${config.libraryName}* :warning: Master branch build marked as unstable: ${env.BUILD_URL}"
+              message: "*${config.libraryName}* :warning: ${env.BRANCH_NAME.capitalize()} branch build marked as unstable: ${env.BUILD_URL}"
             )
           }
         }
