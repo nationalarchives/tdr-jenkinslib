@@ -45,7 +45,7 @@ def call(Map config) {
         }
 
         when {
-          beforeAgent: true
+          beforeAgent true
           expression { ["main", "master"].contains(env.BRANCH_NAME) }
         }
 
