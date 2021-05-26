@@ -77,13 +77,15 @@ def call(Map config) {
           }
           stage('Apply Terraform changes') {
             steps {
-              echo 'Applying Terraform changes...'
-              sh 'echo "yes" | terraform apply'
-              echo 'Changes applied'
-              script {
-                tdr.postToDaTdrSlackChannel(colour: "good",
-                  message: "Deployment complete for ${config.stage} TDR ${config.deployment}"
-                )
+              dir("${config.terraformDirectoryPath}") {
+                echo 'Applying Terraform changes...'
+                sh 'echo "yes" | terraform apply'
+                echo 'Changes applied'
+                script {
+                  tdr.postToDaTdrSlackChannel(colour: "good",
+                    message: "Deployment complete for ${config.stage} TDR ${config.deployment}"
+                  )
+                }
               }
             }
           }
