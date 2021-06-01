@@ -99,7 +99,7 @@ def call(Map config) {
       }
       success {
         script {
-          if (config.stage == "intg") {
+          if (config.stage == "intg" || config.stage == "staging") {
             int delaySeconds = config.testDelaySeconds
 
             tdr.runEndToEndTests(delaySeconds, config.stage, BUILD_URL)
