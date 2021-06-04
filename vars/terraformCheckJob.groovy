@@ -1,5 +1,8 @@
 def call(Map config) {
   library("tdr-jenkinslib")
+  
+  def terraformNode = config.containsKey("terraformNode") ? config.terraformNode : "terraform"
+  
   pipeline {
     agent {
       label "master"
@@ -15,7 +18,7 @@ def call(Map config) {
       stage('Check Terraform') {
         agent {
           ecs {
-            inheritFrom 'terraform'
+            inheritFrom "${terraformNode}"
           }
         }
         environment {

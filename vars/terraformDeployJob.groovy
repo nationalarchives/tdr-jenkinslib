@@ -1,6 +1,9 @@
 def call(Map config) {
   library("tdr-jenkinslib")
+
   def terraformWorkspace = config.stage == "mgmt" ? "default" : config.stage
+  def terraformNode = config.containsKey("terraformNode") ? config.terraformNode : "terraform"
+
   pipeline {
     agent {
       label "master"
@@ -21,7 +24,7 @@ def call(Map config) {
       stage('Run Terraform build') {
         agent {
           ecs {
-            inheritFrom 'terraform'
+            inheritFrom "${terraformNode}"
               taskrole "arn:aws:iam::${env.MANAGEMENT_ACCOUNT}:role/${config.taskRoleName}"
           }
         }
