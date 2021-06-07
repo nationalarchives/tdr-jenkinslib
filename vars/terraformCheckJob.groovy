@@ -11,6 +11,8 @@ def call(Map config) {
       stage("Run git secrets") {
         steps {
           script {
+            echo "HERE"
+            echo "${terraformNode}"
             tdr.runGitSecrets(config.repo)
           }
         }
