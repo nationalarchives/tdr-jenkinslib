@@ -18,7 +18,7 @@ def call(Map config) {
       stage('Check Terraform') {
         agent {
           ecs {
-            inheritFrom "${terraformNode}"
+            inheritFrom 'terraform-v13'
           }
         }
         environment {
