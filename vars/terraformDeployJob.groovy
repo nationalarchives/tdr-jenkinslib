@@ -3,7 +3,7 @@ def call(Map config) {
 
   def terraformWorkspace = config.stage == "mgmt" ? "default" : config.stage
   def terraformNode = config.containsKey("terraformNode") ? config.terraformNode : "terraform"
-  
+
   pipeline {
     agent {
       label "master"
@@ -89,6 +89,14 @@ def call(Map config) {
                     message: "Deployment complete for ${config.stage} TDR ${config.deployment}"
                   )
                 }
+              }
+            }
+          }
+          stage('Tag Release') {
+            steps {
+              sh "git tag ${versionTag}"
+              sshagent(['github-jenkins']) {
+                sh("git push origin ${versionTag}")
               }
             }
           }
