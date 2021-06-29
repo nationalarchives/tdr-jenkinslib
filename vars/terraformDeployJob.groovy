@@ -92,6 +92,26 @@ def call(Map config) {
               }
             }
           }
+          stage('Tag Release') {
+            steps {
+              sh "git tag ${versionTag}"
+              sshagent(['github-jenkins']) {
+                sh("git push origin ${versionTag}")
+              }
+            }
+          }
+          stage("Update release branch") {
+            steps {
+              script {
+                def releaseBranch = "release-${config.stage}"
+
+                sh "git branch -f ${releaseBranch} HEAD"
+                sshagent(['github-jenkins']) {
+                  sh("git push -f origin ${releaseBranch}")
+                }
+              }
+            }
+          }
         }
       }
     }
