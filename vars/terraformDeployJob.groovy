@@ -2,8 +2,9 @@ def call(Map config) {
   library("tdr-jenkinslib")
 
   def terraformWorkspace = config.stage == "mgmt" ? "default" : config.stage
-  def terraformNode = config.containsKey("terraformNode") ? config.terraformNode : "terraform"
   def terraformModulesBranch = config.containsKey("terraformNode") ? config.terraformNode : "master"
+  def terraformNode = config.containsKey("terraformNode") ? config.terraformNode : "terraform"
+  def versionTag = "v${env.BUILD_NUMBER}"
 
   pipeline {
     agent {
