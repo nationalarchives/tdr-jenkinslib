@@ -3,6 +3,7 @@ def call(Map config) {
 
   def terraformWorkspace = config.stage == "mgmt" ? "default" : config.stage
   def terraformNode = config.containsKey("terraformNode") ? config.terraformNode : "terraform"
+  def versionTag = "v${env.BUILD_NUMBER}"
 
   pipeline {
     agent {
