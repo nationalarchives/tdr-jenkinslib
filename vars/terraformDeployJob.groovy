@@ -2,6 +2,7 @@ def call(Map config) {
   library("tdr-jenkinslib")
 
   def terraformWorkspace = config.stage == "mgmt" ? "default" : config.stage
+  def terraformModulesBranch = config.containsKey("terraformNode") ? config.terraformNode : "master"
   def terraformNode = config.containsKey("terraformNode") ? config.terraformNode : "terraform"
   def versionTag = "v${env.BUILD_NUMBER}"
 
@@ -40,7 +41,7 @@ def call(Map config) {
             steps {
               dir("${config.terraformDirectoryPath}") {
                 echo 'Initializing Terraform...'
-                sh "git clone https://github.com/nationalarchives/tdr-terraform-modules.git"
+                sh "git clone --branch ${terraformModulesBranch} https://github.com/nationalarchives/tdr-terraform-modules.git"
                 sshagent(['github-jenkins']) {
                   sh("git clone git@github.com:nationalarchives/tdr-configurations.git")
                 }
