@@ -46,17 +46,13 @@ def call(Map config) {
         deleteDir()
       }
       failure {
-        node('master') {
-          script {
-            tdr.reportFailedBuildToGitHub(config.repo, env.GIT_COMMIT)
-          }
+        script {
+          tdr.reportFailedBuildToGitHub(config.repo, env.GIT_COMMIT)
         }
       }
       success {
-        node('master') {
-          script {
-            tdr.reportSuccessfulBuildToGitHub(config.repo, env.GIT_COMMIT)
-          }
+        script {
+          tdr.reportSuccessfulBuildToGitHub(config.repo, env.GIT_COMMIT)
         }
       }
     }
