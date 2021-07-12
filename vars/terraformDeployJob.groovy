@@ -2,7 +2,7 @@ def call(Map config) {
   library("tdr-jenkinslib")
 
   def terraformWorkspace = config.stage == "mgmt" ? "default" : config.stage
-  def terraformModulesBranch = config.containsKey("modulesBranch") ? config.terraformNode : "master"
+  def terraformModulesBranch = config.containsKey("modulesBranch") ? config.modulesBranch : "master"
   def terraformNode = config.containsKey("terraformNode") ? config.terraformNode : "terraform"
   def versionTag = "v${env.BUILD_NUMBER}"
 
