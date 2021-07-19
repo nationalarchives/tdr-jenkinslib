@@ -101,3 +101,11 @@ def postToDaTdrSlackChannel(Map params) {
           message: "${params.message}",
           channel: "#da-tdr-releases"
 }
+
+def incrementLatestTag() {
+  String latestTag = sh "git describe --tags --abbrev=0"
+
+  String tagNoPrefix = latestTag.startsWith('v') ? latestTag.minus('v') : latestTag
+  
+  return Integer.parseInt(tagNoPrefix)++
+}
