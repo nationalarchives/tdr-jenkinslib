@@ -4,9 +4,7 @@ def call(Map config) {
   def terraformWorkspace = config.stage == "mgmt" ? "default" : config.stage
   def terraformModulesBranch = config.containsKey("modulesBranch") ? config.modulesBranch : "master"
   def terraformNode = config.containsKey("terraformNode") ? config.terraformNode : "terraform"
-  //Terraform doesn't deploy using tags until https://national-archives.atlassian.net/browse/TDR-1229 is implemented
-  //Ensure that the tagging between Jenkins intg and prod instances remain in sync by getting latest tag and incrementing
-  def versionTag = config.stage == ("intg" || "mgmt") ? "v${env.BUILD_NUMBER}" : "v${tdr.incrementLatestTag()}"
+  def versionTag = "v${env.BUILD_NUMBER}"
 
   pipeline {
     agent {
@@ -96,10 +94,14 @@ def call(Map config) {
           }
           stage('Tag Release') {
             steps {
-              sh "git tag ${versionTag}"
-              sshagent(['github-jenkins']) {
-                sh("git push origin ${versionTag}")
-              }
+              //Terraform doesn't deploy using tags until https://national-archives.atlassian.net/browse/TDR-1229 is implemented
+              //Ensure that the tagging between Jenkins intg and prod instances remain in sync by not tagging if deploying to staging and prod
+              if (config.stage == "intg" || config.stage == "mgmt") {
+                sh "git tag ${versionTag}"
+                sshagent(['github-jenkins']) {
+                  sh("git push origin ${versionTag}")
+                }
+              }              
             }
           }
           stage("Update release branch") {
