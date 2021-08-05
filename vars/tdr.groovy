@@ -67,7 +67,7 @@ def getAccountNumberFromStage(String stage) {
 }
 
 def configureJenkinsGitUser() {
-  sh "git config --global user.email tna-digital-archiving-jenkins@nationalarchives.gov.uk"
+  sh "git config --global user.email digitalpreservation@nationalarchives.gov.uk"
   sh "git config --global user.name tna-digital-archiving-jenkins"
 }
 
