@@ -23,7 +23,7 @@ def call(Map config) {
         agent {
           ecs {
             inheritFrom "base"
-            taskDefinitionOverride "arn:aws:ecs:eu-west-2:${env.MANAGEMENT_ACCOUNT}:task-definition/s3publish"
+            taskDefinitionOverride "arn:aws:ecs:eu-west-2:${env.MANAGEMENT_ACCOUNT}:task-definition/sbtwithpostgres"
           }
         }
         when {
