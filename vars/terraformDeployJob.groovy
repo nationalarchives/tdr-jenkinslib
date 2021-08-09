@@ -103,7 +103,7 @@ def call(Map config) {
                     sh("git push origin ${versionTag}")
                   }
                 }
-              }                           
+              }
             }
           }
           stage("Update release branch") {
