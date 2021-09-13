@@ -28,7 +28,7 @@ def runGitSecrets(repo) {
 // Call this when build starts (to let person who made changes know they are being checked) - call within first 'stage' of Jenkins pipeline actions.
 def reportStartOfBuildToGitHub(String repo, String sha) {
   withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_ACCESS_TOKEN')]) {
-    sh("curl -XPOST '${githubApiStatusUrl(repo, sha)}'" + '-H "Authorization: bearer $GITHUB_ACCESS_TOKEN" ' + "--data '{\"state\":\"pending\",\"target_url\":\"${env.BUILD_URL}\",\"description\":\"Jenkins build has started\",\"context\":\"TDR Jenkins build status\"}'")
+    sh("curl -XPOST '${githubApiStatusUrl(repo, sha)}'" + ' -H "Authorization: bearer $GITHUB_ACCESS_TOKEN" ' + " --data '{\"state\":\"pending\",\"target_url\":\"${env.BUILD_URL}\",\"description\":\"Jenkins build has started\",\"context\":\"TDR Jenkins build status\"}'")
   }
 }
 
