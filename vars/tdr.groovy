@@ -36,14 +36,14 @@ def reportStartOfBuildToGitHub(String repo, String sha) {
 // Call when build finishes successfully - in Jenkins pipeline 'post' actions
 def reportSuccessfulBuildToGitHub(String repo, String sha) {
   withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_ACCESS_TOKEN')]) {
-    sh("curl -XPOST '${githubApiStatusUrl(repo, sha)}'" + '-H "Authorization: bearer $GITHUB_ACCESS_TOKEN" ' + "--data '{\"state\":\"success\",\"target_url\":\"${env.BUILD_URL}\",\"description\":\"Jenkins build has completed successfully\",\"context\":\"TDR Jenkins build status\"}'")
+    sh("curl -XPOST '${githubApiStatusUrl(repo, sha)}'" + ' -H "Authorization: bearer $GITHUB_ACCESS_TOKEN" ' + " --data '{\"state\":\"success\",\"target_url\":\"${env.BUILD_URL}\",\"description\":\"Jenkins build has completed successfully\",\"context\":\"TDR Jenkins build status\"}'")
   }
 }
 
 // Call when build fails - in Jenkins pipeline 'post' actions
 def reportFailedBuildToGitHub(String repo, String sha) {
   withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_ACCESS_TOKEN')]) {
-    sh("curl -XPOST '${githubApiStatusUrl(repo, sha)}'" + '-H "Authorization: bearer $GITHUB_ACCESS_TOKEN" ' + "--data '{\"state\":\"failure\",\"target_url\":\"${env.BUILD_URL}\",\"description\":\"Jenkins build has failed\",\"context\":\"TDR Jenkins build status\"}'")
+    sh("curl -XPOST '${githubApiStatusUrl(repo, sha)}'" + ' -H "Authorization: bearer $GITHUB_ACCESS_TOKEN" ' + " --data '{\"state\":\"failure\",\"target_url\":\"${env.BUILD_URL}\",\"description\":\"Jenkins build has failed\",\"context\":\"TDR Jenkins build status\"}'")
   }
 }
 
