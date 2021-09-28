@@ -8,7 +8,7 @@ def call(Map config) {
 
   pipeline {
     agent {
-      label "master"
+      label "built-in"
     }
     //Parameters section required for display in client Jenkins jobs GUI.
     //Selected values are not accessible within the function and must be passed into the function via the config map

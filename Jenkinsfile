@@ -4,7 +4,7 @@ def repo = "tdr-jenkinslib"
 
 pipeline {
   agent {
-    label "master"
+    label "built-in"
   }
 
   stages {

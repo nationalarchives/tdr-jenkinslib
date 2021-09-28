@@ -6,7 +6,7 @@ def call(Map config) {
 
   pipeline {
     agent {
-      label "master"
+      label "built-in"
     }
     parameters {
       choice(name: "STAGE", choices: ["intg", "staging", "prod"], description: "The stage you are running the lambda tests for")
