@@ -5,7 +5,7 @@ def call(Map config) {
   
   pipeline {
     agent {
-      label "master"
+      label "built-in"
     }
     stages {
       stage("Run git secrets") {
