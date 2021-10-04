@@ -6,13 +6,10 @@ def call(Map config) {
     
   pipeline {
     agent {
-      label "master"
+      label "built-in"
     }
     stages {
       stage("Run git secrets") {
-        agent {
-          label "built-in"
-        }
         steps {
           script {
             tdr.runGitSecrets(config.libraryName)
@@ -67,10 +64,7 @@ def call(Map config) {
           }
         }
       }
-      stage("Create version bump pull request") {
-        agent {
-          label "master"
-        }
+      stage("Create version bump pull request") {        
         steps {
           script {
             tdr.createGitHubPullRequest(
