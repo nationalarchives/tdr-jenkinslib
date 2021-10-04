@@ -13,9 +13,6 @@ def call(Map config) {
     }
     stages {
       stage("Run git secrets") {
-        agent {
-          label "master"
-        }
         steps {
           script {
             tdr.runGitSecrets(repo)
