@@ -2,7 +2,7 @@ def call(Map config) {
   library("tdr-jenkinslib")
   def scalaVersion = "scala-2.13"
 
-  def versionTag = "v1000"
+  def versionTag = "v${env.BUILD_NUMBER}"
   def repo = "tdr-${config.libraryName}"
 
   pipeline {
@@ -44,7 +44,7 @@ def call(Map config) {
 
         when {
           beforeAgent true
-          expression { ["main", "master", "changes-for-performance-testing"].contains(env.BRANCH_NAME) }
+          expression { ["main", "master"].contains(env.BRANCH_NAME) }
         }
 
         stages {
