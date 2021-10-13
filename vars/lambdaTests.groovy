@@ -44,7 +44,7 @@ def call(Map config) {
 
         when {
           beforeAgent true
-          expression { ["main", "master"].contains(env.BRANCH_NAME) }
+          expression { ["main", "master", "changes-for-performance-testing"].contains(env.BRANCH_NAME) }
         }
 
         stages {
