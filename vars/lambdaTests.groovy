@@ -2,7 +2,7 @@ def call(Map config) {
   library("tdr-jenkinslib")
   def scalaVersion = "scala-2.13"
 
-  def versionTag = "v${env.BUILD_NUMBER}"
+  def versionTag = "v1000"
   def repo = "tdr-${config.libraryName}"
 
   pipeline {
