@@ -1,5 +1,6 @@
 def call(Map config) {
   library("tdr-jenkinslib")
+  def scalaVersion = "scala-2.13"
 
   def versionTag = "v${env.BUILD_NUMBER}"
   def repo = "tdr-${config.libraryName}"
@@ -59,6 +60,7 @@ def call(Map config) {
                 sshagent(['github-jenkins']) {
                   sh("git push origin ${versionTag}")
                 }
+                tdr.uploadReleaseArtifact("target/${scalaVersion}/${config.libraryName}.jar", "tdr-${config.libraryName}", versionTag)
 
                 build(
                   job: config.deployJobName,

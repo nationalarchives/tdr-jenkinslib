@@ -52,6 +52,14 @@ def assembleAndStash(String libraryName) {
   stash includes: "target/${scalaVersion}/${libraryName}.jar", name: "${libraryName}-jar"
 }
 
+def uploadReleaseArtifact(String path, String repo, String versionTag) {
+  String fileName = path.split("/").last()
+  withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_ACCESS_TOKEN')]) {
+    String releaseId = sh(script: "curl -XPOST 'https://api.github.com/repos/nationalarchives/${repo}/releases'" +' -H "Authorization: bearer $GITHUB_ACCESS_TOKEN" ' + "-d '{\"tag_name\":\"${versionTag}\"}' | jq -r '.id'", returnStdout: true).trim()
+    sh("curl -XPOST --data-binary \"@${path}\" 'https://uploads.github.com/repos/nationalarchives/${repo}/releases/${releaseId}/assets?name=${fileName}&label=${fileName}'" +' -H "Authorization: bearer $GITHUB_ACCESS_TOKEN" ' + " -H 'Content-Type: application/octet-stream'")
+  }
+}
+
 def copyToS3CodeBucket(String libraryName, String versionTag) {
   sh "aws s3 cp target/${scalaVersion}/${libraryName}.jar s3://tdr-backend-code-mgmt/${versionTag}/${libraryName}.jar"
 }
