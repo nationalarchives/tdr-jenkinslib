@@ -25,6 +25,7 @@ def call(Map config) {
           //no-color option set for Terraform commands as Jenkins console unable to output the colour
           //making output difficult to read
           TF_CLI_ARGS = "-no-color"
+          GITHUB_OWNER = "nationalarchives"
         }
         stages {
           stage('Check Terraform formatting') {
@@ -33,9 +34,12 @@ def call(Map config) {
                 tdr.reportStartOfBuildToGitHub(config.repo, env.GIT_COMMIT)
               }
               checkout scm
-              dir("${config.terraformDirectoryPath}") {
-                sh 'terraform fmt -check -recursive'
+              withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_TOKEN')]) {
+                dir("${config.terraformDirectoryPath}") {
+                  sh 'terraform fmt -check -recursive'
+                }
               }
+
             }
           }
         }
