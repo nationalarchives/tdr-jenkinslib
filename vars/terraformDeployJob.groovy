@@ -35,6 +35,7 @@ def call(Map config) {
           //no-color option set for Terraform commands as Jenkins console unable to output the colour
           //making output difficult to read
           TF_CLI_ARGS = "-no-color"
+          GITHUB_OWNER = "nationalarchives"
         }
         stages {
           stage('Set up Terraform workspace') {
@@ -45,10 +46,12 @@ def call(Map config) {
                 sshagent(['github-jenkins']) {
                   sh("git clone git@github.com:nationalarchives/tdr-configurations.git")
                 }
-                sh 'terraform init'
-                //If Terraform workspace exists continue
-                sh "terraform workspace new ${terraformWorkspace} || true"
-                sh "terraform workspace select ${terraformWorkspace}"
+                withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_TOKEN')]) {
+                  sh 'terraform init'
+                  //If Terraform workspace exists continue
+                  sh "terraform workspace new ${terraformWorkspace} || true"
+                  sh "terraform workspace select ${terraformWorkspace}"
+                }
               }
             }
           }
