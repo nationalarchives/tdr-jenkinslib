@@ -59,7 +59,9 @@ def call(Map config) {
             steps {
               dir("${config.terraformDirectoryPath}") {
                 echo 'Running Terraform plan...'
-                sh 'terraform plan'
+                withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_TOKEN')]) {
+                  sh 'terraform plan'
+                }
                 script {
                   tdr.postToDaTdrSlackChannel(colour: "good",
                     message: "Terraform plan complete for ${config.stage} TDR ${config.deployment}. " +
@@ -85,7 +87,9 @@ def call(Map config) {
             steps {
               dir("${config.terraformDirectoryPath}") {
                 echo 'Applying Terraform changes...'
-                sh 'echo "yes" | terraform apply'
+                withCredentials([string(credentialsId: 'github-jenkins-api-key', variable: 'GITHUB_TOKEN')]) {
+                  sh 'echo "yes" | terraform apply'
+                }
                 echo 'Changes applied'
                 script {
                   tdr.postToDaTdrSlackChannel(colour: "good",
